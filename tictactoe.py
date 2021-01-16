@@ -1,5 +1,6 @@
 class TicTacToe:
     def __init__(self):
+        self.ask_input = True
         self.grid = [
                      ['--', '--', '--', '--', '-'],
                      ['\n| ', '  ', '  ', '  ', '|'],
@@ -34,17 +35,40 @@ class TicTacToe:
                     self.count_o += 1
                     self.grid[i][j] = cells[k] + ' '
                 k += 1
-        list_to_str = ''
-        for i in range(len(self.grid)):
-            for j in range(len(self.grid)):
-                list_to_str += self.grid[i][j]
-        print(list_to_str)
+        print(self.list_to_str())
         self.get_horizontal_cells(cells)
         self.get_vertical_cells(cells)
         self.get_diagonal_cells(cells)
         self.get_rows()
         self.get_columns()
         self.get_cross()
+
+    def list_to_str(self):
+        str_grid = ''
+        for i in range(len(self.grid)):
+            for j in range(len(self.grid)):
+                str_grid += self.grid[i][j]
+        return str_grid
+
+    def validate_coordinates(self, coordinates):
+        if (coordinates[0].isnumeric() is False) or (coordinates[2].isnumeric() is False):
+            print('You should enter numbers!')
+            return False
+        elif (int(coordinates[0]) < 1 or int(coordinates[0]) > 3) \
+                or (int(coordinates[2]) < 1 or int(coordinates[2]) > 3):
+            print('Coordinates should be from 1 to 3!')
+            return False
+        elif self.grid[int(coordinates[0])][int(coordinates[2])] != '  ':
+            print('This cell is occupied! Choose another one!')
+            return False
+        self.ask_input = False
+        return True
+
+    def update_grid(self, coordinates):
+        line = int(coordinates[0])
+        column = int(coordinates[2])
+        self.grid[line][column] = 'X' + ' '
+        print(self.list_to_str())
 
     def get_horizontal_cells(self, cells):
         j = 0
@@ -135,7 +159,11 @@ class TicTacToe:
 def main():
     game = TicTacToe()
     game.print_grid(input('Enter cells: '))
-    game.get_state()
+    while game.ask_input:
+        user_coordinates = input('Enter the coordinates: ')
+        if game.validate_coordinates(user_coordinates):
+            game.update_grid(user_coordinates)
+    # game.get_state()
 
 
 main()
